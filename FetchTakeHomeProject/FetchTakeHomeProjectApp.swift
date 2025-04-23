@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct FetchTakeHomeProjectApp: App {
+    @StateObject var activeTheme: Theme = Theme.sampleData.first!
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DashboardView()
+                .environmentObject(activeTheme)
+                .task {
+                    let themeId = UserDefaults.standard.integer(forKey: "savedTheme")
+                    self.activeTheme.convert(to: Theme.sampleData.first(where: { $0.themeId == themeId}) ?? Theme.sampleData.first!)
+                    
+                }
         }
     }
 }

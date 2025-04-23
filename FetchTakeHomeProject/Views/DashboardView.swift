@@ -1,0 +1,215 @@
+//
+//  DashboardView.swift
+//  FetchTakeHomeProject
+//
+//  Created by Casey Brandenburg on 4/21/25.
+//
+
+import SwiftUI
+
+struct DashboardView: View {
+    @EnvironmentObject var theme: Theme
+    @StateObject var viewModel = DashboardViewModel()
+    @State var path = NavigationPath()
+    
+    var body: some View {
+        NavigationStack(path: $path){
+            VStack(alignment: .leading, spacing: 0){
+                // MARK: Header
+                HStack(alignment: .center){
+                    Image(systemName: "gearshape.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 25)
+                        .foregroundStyle(Color.clear)
+                    
+                    Spacer()
+                    
+                    Image("HeaderGraphic")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 40)
+                        .colorMultiply(theme.theme1)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        path.append(Page.Settings)
+                    }, label: {
+                        Image(systemName: "gearshape.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 25)
+                            .foregroundStyle(theme.foreground2)
+                    })
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 5)
+                .padding(.bottom, 12)
+                .background(LinearGradient(colors: [theme.background1, theme.background2, theme.background1], startPoint: .leading, endPoint: .trailing))
+                .background(theme.background1
+                    .shadow(radius:8)
+                    .mask(Rectangle().padding(.bottom, -20))
+                )
+                .zIndex(3)
+                
+                switch viewModel.recipeLoadState {
+                case .idle:
+                    // MARK: - Idle
+                    GeometryReader { geo in
+                        ScrollView {
+                            VStack {
+                                Spacer()
+                                Image(systemName: "arrow.trianglehead.counterclockwise")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 30)
+                                    .foregroundStyle(theme.foreground1)
+                                    .padding(.bottom)
+                                
+                                Text("Refresh to load recipes")
+                                    .foregroundStyle(theme.foreground1)
+                                    .font(.headline)
+                                    .padding(.bottom, 35)
+                                Spacer()
+                            }
+                            .frame(width: geo.size.width, height: geo.size.height)
+                        }
+                        .refreshable {
+                            do {
+                                viewModel.recipeLoadState = .loading
+                                try await viewModel.loadRecipes()
+                            } catch {
+                                print("Failed loading recipes")
+                                viewModel.recipeLoadState = .failed
+                            }
+                        }
+                    }
+                case .success, .loading:
+                    // MARK: - Success & Loading
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 10){
+                            if viewModel.loadedRecipes.isEmpty {
+                                
+                            } else {
+                                HStack {
+                                    Spacer()
+                                    Image("TitleGraphic")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 80)
+                                    Spacer()
+                                }
+                                .padding(.top)
+                                
+                                if let highlightedRecipe = viewModel.loadedRecipes.randomElement(){
+                                    Divider()
+                                        .padding(.horizontal)
+                                    
+                                    Text("Our pick for you...")
+                                        .foregroundStyle(theme.foreground1)
+                                        .font(Font.system(size: 24))
+                                        .fontWeight(.bold)
+                                        .padding(.leading, 12)
+                                        .padding(.top, 10)
+                                    
+                                    Button(action: {
+                                        viewModel.selectedRecipe = highlightedRecipe
+                                        path.append(Page.RecipeDetail)
+                                    }, label: {
+                                        RecipeHighlightView(recipe: highlightedRecipe)
+                                    })
+                                }
+                                
+                                Divider()
+                                    .padding(.horizontal)
+                                
+                                Text("Today's Recipes")
+                                    .foregroundStyle(theme.foreground1)
+                                    .font(Font.system(size: 24))
+                                    .fontWeight(.bold)
+                                    .padding(.leading, 12)
+                                
+                                LazyVGrid(columns: viewModel.gridItems(), spacing: 10){
+                                    ForEach(viewModel.loadedRecipes, id: \.id){ recipe in
+                                        Button(action: {
+                                            viewModel.selectedRecipe = recipe
+                                            path.append(Page.RecipeDetail)
+                                        }, label: {
+                                            RecipeIconView(recipe: recipe)
+                                                .frame(maxHeight: 230, alignment: .top)
+                                        })
+                                    }
+                                }
+                                .padding(.horizontal, 10)
+                            }
+                        }
+                    }
+                    .refreshable {
+                        do {
+                            try await viewModel.loadRecipes()
+                        } catch {
+                            print("Failed loading recipes")
+                            viewModel.recipeLoadState = .failed
+                        }
+                    }
+                case .failed:
+                    // MARK: - Failed
+                    GeometryReader { geo in
+                        ScrollView {
+                            VStack {
+                                Spacer()
+                                Text("Something went wrong :(\nRefresh to try again")
+                                    .foregroundStyle(theme.foreground1)
+                                    .font(.headline)
+                                    .multilineTextAlignment(.center)
+                                Spacer()
+                            }
+                            .frame(width: geo.size.width, height: geo.size.height)
+                        }
+                        .refreshable {
+                            do {
+                                try await viewModel.loadRecipes()
+                            } catch {
+                                print("Failed loading recipes")
+                                viewModel.recipeLoadState = .failed
+                            }
+                        }
+                    }
+                }
+                
+            }
+            .background(theme.background2)
+            .preferredColorScheme(theme.systemTheme)
+            .task {
+                // Reset the selected recipe upon returning home
+                viewModel.selectedRecipe = nil
+                
+                // If the initial recipe load has not been attempted then go ahead and do it
+                if viewModel.recipeLoadState == .idle {
+                    do {
+                        print("Loading recipes")
+                        try await viewModel.loadRecipes()
+                    } catch {
+                        print("Failed loading recipes")
+                        viewModel.recipeLoadState = .failed
+                    }
+                }
+            }
+            .navigationDestination(for: Page.self, destination: { destination in
+                // MARK: Navigation
+                switch destination {
+                case .RecipeDetail:
+                    RecipeDetailView(recipe: self.viewModel.selectedRecipe ?? Recipe.sampleData.first!)
+                case .Settings:
+                    
+                }
+            })
+        }
+    }
+}
+
+#Preview {
+    DashboardView()
+        .environmentObject(Theme.sampleData.first!)
+}
