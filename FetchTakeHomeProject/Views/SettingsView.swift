@@ -11,7 +11,6 @@ struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @EnvironmentObject var theme: Theme
     @ObservedObject var imageLoader = ImageLoader()
-    var recipe: Recipe
     
     var body: some View {
             VStack(alignment: .leading, spacing: 0){
@@ -53,59 +52,15 @@ struct SettingsView: View {
                 )
                 .zIndex(3)
                 
-                // MARK: Image
-                if let image = imageLoader.image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } else {
-                    ZStack {
-                        Rectangle()
-                            .fill(theme.background3)
-                            .aspectRatio(contentMode: .fit)
-                        Image("TitleGraphic")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .contrast(0)
-                            .brightness(1)
-                            .colorMultiply(theme.foreground3)
-                            .padding(.horizontal, 30)
-                    }
-                }
-                
-                // MARK: Description
-                Text(recipe.name)
-                    .foregroundStyle(theme.foreground1)
-                    .font(Font.system(size: 26))
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.01)
-                
-                Text(recipe.cuisine)
-                    .foregroundStyle(theme.theme1)
-                    .font(Font.system(size: 20))
-                    .fontWeight(.bold)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+                Spacer()
             }
             .background(theme.background2)
             .navigationBarBackButtonHidden()
             .preferredColorScheme(theme.systemTheme)
-            .task {
-                if let iconURL = self.recipe.largeImageURL {
-                    await imageLoader.load(from: iconURL)
-                }
-            }
     }
 }
 
 #Preview {
-    SettingsView(recipe: Recipe(id: UUID(),
-                                    cuisine: "Brazilian",
-                                    name: "Super Eggs",
-                                    largeImageURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/b9ab0071-b281-4bee-b361-ec340d405320/large.jpg"),
-                                    smallImageURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/b9ab0071-b281-4bee-b361-ec340d405320/small.jpg"),
-                                    sourceURL: nil,
-                                    youtubeURL: URL(string: "www.com")))
+    SettingsView()
         .environmentObject(Theme.sampleData.first!)
 }

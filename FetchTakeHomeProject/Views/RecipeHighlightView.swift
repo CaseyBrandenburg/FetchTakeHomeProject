@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RecipeHighlightView: View {
     @EnvironmentObject var theme: Theme
-    @ObservedObject var imageLoader = ImageLoader()
+    @StateObject var imageLoader = ImageLoader()
     let recipe: Recipe
     
     var body: some View {

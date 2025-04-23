@@ -100,38 +100,86 @@ struct DashboardView: View {
                                         .frame(height: 80)
                                     Spacer()
                                 }
-                                .padding(.top)
-                                
-                                if let highlightedRecipe = viewModel.loadedRecipes.randomElement(){
-                                    Divider()
-                                        .padding(.horizontal)
-                                    
-                                    Text("Our pick for you...")
-                                        .foregroundStyle(theme.foreground1)
-                                        .font(Font.system(size: 24))
-                                        .fontWeight(.bold)
-                                        .padding(.leading, 12)
-                                        .padding(.top, 10)
-                                    
-                                    Button(action: {
-                                        viewModel.selectedRecipe = highlightedRecipe
-                                        path.append(Page.RecipeDetail)
-                                    }, label: {
-                                        RecipeHighlightView(recipe: highlightedRecipe)
-                                    })
-                                }
+                                .padding(.top, 20)
                                 
                                 Divider()
                                     .padding(.horizontal)
                                 
-                                Text("Today's Recipes")
+                                Text("Our pick for you...")
+                                    .foregroundStyle(theme.foreground1)
+                                    .font(Font.system(size: 24))
+                                    .fontWeight(.bold)
+                                    .padding(.leading, 12)
+                                    .padding(.top, 10)
+                                
+                                Button(action: {
+                                    viewModel.selectedRecipe = viewModel.highlightedRecipe
+                                    path.append(Page.RecipeDetail)
+                                }, label: {
+                                    RecipeHighlightView(recipe: viewModel.highlightedRecipe)
+                                })
+                                
+                                Divider()
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 5)
+                                
+                                Text("Your favorites")
                                     .foregroundStyle(theme.foreground1)
                                     .font(Font.system(size: 24))
                                     .fontWeight(.bold)
                                     .padding(.leading, 12)
                                 
+                                if viewModel.favoriteRecipeIDs.isEmpty {
+                                    HStack {
+                                        Spacer()
+                                        Text("You don't have any favorites yet")
+                                            .foregroundStyle(theme.foreground2)
+                                            .font(Font.system(size: 16))
+                                        Spacer()
+                                    }
+                                    .padding(.vertical, 40)
+                                } else {
+                                    LazyVGrid(columns: viewModel.gridItems(), spacing: 10){
+                                        ForEach(viewModel.loadedRecipes.filter({ viewModel.favoriteRecipeIDs.contains($0.id) }), id: \.id){ recipe in
+                                            Button(action: {
+                                                viewModel.selectedRecipe = recipe
+                                                path.append(Page.RecipeDetail)
+                                            }, label: {
+                                                RecipeIconView(recipe: recipe)
+                                                    .frame(maxHeight: 230, alignment: .top)
+                                            })
+                                        }
+                                    }
+                                    .padding(.horizontal, 10)
+                                }
+                                
+                                Divider()
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 5)
+
+                                VStack(alignment: .leading, spacing: 0){
+                                    Text("All Recipes")
+                                        .foregroundStyle(theme.foreground1)
+                                        .font(Font.system(size: 24))
+                                        .fontWeight(.bold)
+                                        .padding(.leading, 12)
+                                    
+                                    TextField("",
+                                              text: $viewModel.searchText,
+                                              prompt: Text("Search for a recipe or cuisine...").foregroundColor(theme.foreground2))
+                                        .padding(.leading, 12)
+                                        .font(Font.system(size: 16))
+                                        .tint(theme.theme1)
+                                        .foregroundColor(theme.foreground1)
+                                        .padding(.bottom, 10)
+                                        .padding(.top, 7)
+                                        .onChange(of: viewModel.searchText, perform: { value in
+                                            viewModel.updateFilteredRecipes()
+                                        })
+                                }
+                                
                                 LazyVGrid(columns: viewModel.gridItems(), spacing: 10){
-                                    ForEach(viewModel.loadedRecipes, id: \.id){ recipe in
+                                    ForEach(viewModel.filteredRecipes, id: \.id){ recipe in
                                         Button(action: {
                                             viewModel.selectedRecipe = recipe
                                             path.append(Page.RecipeDetail)
@@ -177,7 +225,6 @@ struct DashboardView: View {
                         }
                     }
                 }
-                
             }
             .background(theme.background2)
             .preferredColorScheme(theme.systemTheme)
@@ -200,9 +247,10 @@ struct DashboardView: View {
                 // MARK: Navigation
                 switch destination {
                 case .RecipeDetail:
-                    RecipeDetailView(recipe: self.viewModel.selectedRecipe ?? Recipe.sampleData.first!)
+                    RecipeDetailView(recipe: self.viewModel.selectedRecipe ?? Recipe.sampleData.first!,
+                                     favoriteRecipeIDs: $viewModel.favoriteRecipeIDs)
                 case .Settings:
-                    
+                    SettingsView()
                 }
             })
         }
