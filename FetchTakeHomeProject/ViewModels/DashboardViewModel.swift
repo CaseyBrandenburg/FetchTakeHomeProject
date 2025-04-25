@@ -14,7 +14,6 @@ class DashboardViewModel: ObservableObject {
     @Published var recipeLoadState: LoadState
     @Published var favoriteRecipeIDs: [UUID] {
         didSet {
-            print("Saved favorite recipes to userdefaults")
             saveFavoriteRecipes()
         }
     }

@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 
-class Theme: ObservableObject, Identifiable {
+class Theme: ObservableObject, Identifiable, Copyable {
     var id: UUID = UUID()
-    var themeId: Int
-    var systemTheme: ColorScheme
+    @Published var themeId: Int
+    @Published var systemTheme: ColorScheme
     @Published var background1: Color
     @Published var background2: Color
     @Published var background3: Color
@@ -22,17 +22,17 @@ class Theme: ObservableObject, Identifiable {
     @Published var theme2: Color
     @Published var theme3: Color
     
-    init(background1: Color,
-         background2: Color,
-         background3: Color,
-         foreground1: Color,
-         foreground2: Color,
-         foreground3: Color,
-         theme1: Color,
-         theme2: Color,
-         theme3: Color,
-         themeId: Int,
-         systemTheme: ColorScheme){
+    init(background1: Color = Color("DarkMode_BG1"),
+         background2: Color = Color("DarkMode_BG2"),
+         background3: Color = Color("DarkMode_BG3"),
+         foreground1: Color = Color("DarkMode_FG1"),
+         foreground2: Color = Color("DarkMode_FG2"),
+         foreground3: Color = Color("DarkMode_FG3"),
+         theme1: Color = Color("DarkMode_T1"),
+         theme2: Color = Color("DarkMode_T2"),
+         theme3: Color = Color("DarkMode_T3"),
+         themeId: Int = 0,
+         systemTheme: ColorScheme = .dark){
         self.background1 = background1
         self.background2 = background2
         self.background3 = background3
@@ -64,17 +64,6 @@ class Theme: ObservableObject, Identifiable {
 
 extension Theme {
     static let sampleData: [Theme] = [
-        Theme(background1: Color("DarkMode_BG1"),
-              background2: Color("DarkMode_BG2"),
-              background3: Color("DarkMode_BG3"),
-              foreground1: Color("DarkMode_FG1"),
-              foreground2: Color("DarkMode_FG2"),
-              foreground3: Color("DarkMode_FG3"),
-              theme1: Color("DarkMode_T1"),
-              theme2: Color("DarkMode_T2"),
-              theme3: Color("DarkMode_T3"),
-              themeId: 0,
-              systemTheme: .dark),
         Theme(background1: Color("LightMode_BG1"),
               background2: Color("LightMode_BG2"),
               background3: Color("LightMode_BG3"),
@@ -84,8 +73,19 @@ extension Theme {
               theme1: Color("LightMode_T1"),
               theme2: Color("LightMode_T2"),
               theme3: Color("LightMode_T3"),
-              themeId: 1,
+              themeId: 0,
               systemTheme: .light),
+        Theme(background1: Color("DarkMode_BG1"),
+              background2: Color("DarkMode_BG2"),
+              background3: Color("DarkMode_BG3"),
+              foreground1: Color("DarkMode_FG1"),
+              foreground2: Color("DarkMode_FG2"),
+              foreground3: Color("DarkMode_FG3"),
+              theme1: Color("DarkMode_T1"),
+              theme2: Color("DarkMode_T2"),
+              theme3: Color("DarkMode_T3"),
+              themeId: 1,
+              systemTheme: .dark),
         Theme(background1: Color("ForestMode_BG1"),
               background2: Color("ForestMode_BG2"),
               background3: Color("ForestMode_BG3"),

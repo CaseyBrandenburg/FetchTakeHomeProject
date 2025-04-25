@@ -52,6 +52,43 @@ struct SettingsView: View {
                 )
                 .zIndex(3)
                 
+                // MARK: Change themes
+                Button(action: {
+                    if theme.themeId == Theme.sampleData.last?.themeId {
+                        withAnimation {
+                            theme.convert(to: Theme.sampleData.first!)
+                        }
+                        UserDefaults.standard.set(theme.themeId, forKey: "selectedThemeId")
+                    } else {
+                        withAnimation {
+                            theme.convert(to: Theme.sampleData.first(where: { $0.themeId == theme.themeId + 1 }) ?? Theme.sampleData.first!)
+                        }
+                        UserDefaults.standard.set(theme.themeId, forKey: "selectedThemeId")
+                    }
+                }, label: {
+                    HStack(alignment: .center, spacing: 0){
+                        Image(systemName: "paintpalette")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20)
+                            .foregroundColor(theme.foreground1)
+                            .padding(.trailing, 10)
+                        Text("Change app theme")
+                            .font(Font.custom("AlteDIN1451Mittelschrift", size: 16))
+                            .foregroundColor(theme.foreground1)
+                            .kerning(0.3)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.01)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer()
+                    }
+                    .frame(height: 75)
+                    .padding(.horizontal)
+                })
+                
+                Divider()
+                    .padding(.horizontal, 10)
+                
                 Spacer()
             }
             .background(theme.background2)

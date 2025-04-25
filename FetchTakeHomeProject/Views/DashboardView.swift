@@ -94,10 +94,20 @@ struct DashboardView: View {
                             } else {
                                 HStack {
                                     Spacer()
-                                    Image("TitleGraphic")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 80)
+                                    ZStack(alignment: .bottomTrailing){
+                                        Image("TitleGraphic")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 80)
+                                            .colorMultiply(theme.theme3)
+                                        Image("HeaderGraphic")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 40)
+                                            .rotationEffect(Angle(degrees: -10))
+                                            .colorMultiply(theme.theme1)
+                                            .offset(x: 12)
+                                    }
                                     Spacer()
                                 }
                                 .padding(.top, 20)
@@ -173,9 +183,9 @@ struct DashboardView: View {
                                         .foregroundColor(theme.foreground1)
                                         .padding(.bottom, 10)
                                         .padding(.top, 7)
-                                        .onChange(of: viewModel.searchText, perform: { value in
+                                        .onChange(of: viewModel.searchText){ _, value in
                                             viewModel.updateFilteredRecipes()
-                                        })
+                                        }
                                 }
                                 
                                 LazyVGrid(columns: viewModel.gridItems(), spacing: 10){

@@ -1,6 +1,7 @@
 {
-  "colors" : [
+  "images" : [
     {
+      "filename" : "404Loading.png",
       "idiom" : "universal"
     }
   ],
