@@ -87,70 +87,119 @@ struct DashboardView: View {
                     }
                 case .success, .loading:
                     // MARK: - Success & Loading
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 10){
-                            if viewModel.loadedRecipes.isEmpty {
-                                
-                            } else {
-                                HStack {
-                                    Spacer()
-                                    ZStack(alignment: .bottomTrailing){
-                                        Image("TitleGraphic")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(height: 80)
-                                            .colorMultiply(theme.theme3)
-                                        Image("HeaderGraphic")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(height: 40)
-                                            .rotationEffect(Angle(degrees: -10))
-                                            .colorMultiply(theme.theme1)
-                                            .offset(x: 12)
+                    GeometryReader { geo in
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 10){
+                                if !viewModel.loadedRecipes.isEmpty {
+                                    VStack {
+                                        Spacer()
+                                        Text("There are no recipes available right now\nCome back later and try again")
+                                            .foregroundStyle(theme.foreground1)
+                                            .font(.headline)
+                                            .multilineTextAlignment(.center)
+                                            .padding(.bottom, 40)
+                                        Spacer()
                                     }
-                                    Spacer()
-                                }
-                                .padding(.top, 20)
-                                
-                                Divider()
-                                    .padding(.horizontal)
-                                
-                                Text("Our pick for you...")
-                                    .foregroundStyle(theme.foreground1)
-                                    .font(Font.system(size: 24))
-                                    .fontWeight(.bold)
-                                    .padding(.leading, 12)
-                                    .padding(.top, 10)
-                                
-                                Button(action: {
-                                    viewModel.selectedRecipe = viewModel.highlightedRecipe
-                                    path.append(Page.RecipeDetail)
-                                }, label: {
-                                    RecipeHighlightView(recipe: viewModel.highlightedRecipe)
-                                })
-                                
-                                Divider()
-                                    .padding(.horizontal)
-                                    .padding(.vertical, 5)
-                                
-                                Text("Your favorites")
-                                    .foregroundStyle(theme.foreground1)
-                                    .font(Font.system(size: 24))
-                                    .fontWeight(.bold)
-                                    .padding(.leading, 12)
-                                
-                                if viewModel.favoriteRecipeIDs.isEmpty {
+                                    .frame(width: geo.size.width, height: geo.size.height)
+                                } else {
                                     HStack {
                                         Spacer()
-                                        Text("You don't have any favorites yet")
-                                            .foregroundStyle(theme.foreground2)
-                                            .font(Font.system(size: 16))
+                                        ZStack(alignment: .bottomTrailing){
+                                            Image("TitleGraphic")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(height: 80)
+                                                .colorMultiply(theme.theme3)
+                                            Image("HeaderGraphic")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(height: 40)
+                                                .rotationEffect(Angle(degrees: -10))
+                                                .colorMultiply(theme.theme1)
+                                                .offset(x: 12)
+                                        }
                                         Spacer()
                                     }
-                                    .padding(.vertical, 40)
-                                } else {
+                                    .padding(.top, 20)
+                                    
+                                    Divider()
+                                        .padding(.horizontal)
+                                    
+                                    Text("Our pick for you...")
+                                        .foregroundStyle(theme.foreground1)
+                                        .font(Font.system(size: 24))
+                                        .fontWeight(.bold)
+                                        .padding(.leading, 12)
+                                        .padding(.top, 10)
+                                    
+                                    Button(action: {
+                                        viewModel.selectedRecipe = viewModel.highlightedRecipe
+                                        path.append(Page.RecipeDetail)
+                                    }, label: {
+                                        RecipeHighlightView(recipe: viewModel.highlightedRecipe)
+                                    })
+                                    
+                                    Divider()
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 5)
+                                    
+                                    Text("Your favorites")
+                                        .foregroundStyle(theme.foreground1)
+                                        .font(Font.system(size: 24))
+                                        .fontWeight(.bold)
+                                        .padding(.leading, 12)
+                                    
+                                    if viewModel.favoriteRecipeIDs.isEmpty {
+                                        HStack {
+                                            Spacer()
+                                            Text("You don't have any favorites yet")
+                                                .foregroundStyle(theme.foreground2)
+                                                .font(Font.system(size: 16))
+                                            Spacer()
+                                        }
+                                        .padding(.vertical, 40)
+                                    } else {
+                                        LazyVGrid(columns: viewModel.gridItems(), spacing: 10){
+                                            ForEach(viewModel.loadedRecipes.filter({ viewModel.favoriteRecipeIDs.contains($0.id) }), id: \.id){ recipe in
+                                                Button(action: {
+                                                    viewModel.selectedRecipe = recipe
+                                                    path.append(Page.RecipeDetail)
+                                                }, label: {
+                                                    RecipeIconView(recipe: recipe)
+                                                        .frame(maxHeight: 230, alignment: .top)
+                                                })
+                                            }
+                                        }
+                                        .padding(.horizontal, 10)
+                                    }
+                                    
+                                    Divider()
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 5)
+
+                                    VStack(alignment: .leading, spacing: 0){
+                                        Text("All Recipes")
+                                            .foregroundStyle(theme.foreground1)
+                                            .font(Font.system(size: 24))
+                                            .fontWeight(.bold)
+                                            .padding(.leading, 12)
+                                        
+                                        TextField("",
+                                                  text: $viewModel.searchText,
+                                                  prompt: Text("Search for a recipe or cuisine...").foregroundColor(theme.foreground2))
+                                            .padding(.leading, 12)
+                                            .font(Font.system(size: 16))
+                                            .tint(theme.theme1)
+                                            .foregroundColor(theme.foreground1)
+                                            .padding(.bottom, 10)
+                                            .padding(.top, 7)
+                                            .onChange(of: viewModel.searchText){ _, value in
+                                                viewModel.updateFilteredRecipes()
+                                            }
+                                    }
+                                    
                                     LazyVGrid(columns: viewModel.gridItems(), spacing: 10){
-                                        ForEach(viewModel.loadedRecipes.filter({ viewModel.favoriteRecipeIDs.contains($0.id) }), id: \.id){ recipe in
+                                        ForEach(viewModel.filteredRecipes, id: \.id){ recipe in
                                             Button(action: {
                                                 viewModel.selectedRecipe = recipe
                                                 path.append(Page.RecipeDetail)
@@ -162,53 +211,15 @@ struct DashboardView: View {
                                     }
                                     .padding(.horizontal, 10)
                                 }
-                                
-                                Divider()
-                                    .padding(.horizontal)
-                                    .padding(.vertical, 5)
-
-                                VStack(alignment: .leading, spacing: 0){
-                                    Text("All Recipes")
-                                        .foregroundStyle(theme.foreground1)
-                                        .font(Font.system(size: 24))
-                                        .fontWeight(.bold)
-                                        .padding(.leading, 12)
-                                    
-                                    TextField("",
-                                              text: $viewModel.searchText,
-                                              prompt: Text("Search for a recipe or cuisine...").foregroundColor(theme.foreground2))
-                                        .padding(.leading, 12)
-                                        .font(Font.system(size: 16))
-                                        .tint(theme.theme1)
-                                        .foregroundColor(theme.foreground1)
-                                        .padding(.bottom, 10)
-                                        .padding(.top, 7)
-                                        .onChange(of: viewModel.searchText){ _, value in
-                                            viewModel.updateFilteredRecipes()
-                                        }
-                                }
-                                
-                                LazyVGrid(columns: viewModel.gridItems(), spacing: 10){
-                                    ForEach(viewModel.filteredRecipes, id: \.id){ recipe in
-                                        Button(action: {
-                                            viewModel.selectedRecipe = recipe
-                                            path.append(Page.RecipeDetail)
-                                        }, label: {
-                                            RecipeIconView(recipe: recipe)
-                                                .frame(maxHeight: 230, alignment: .top)
-                                        })
-                                    }
-                                }
-                                .padding(.horizontal, 10)
                             }
                         }
-                    }
-                    .refreshable {
-                        do {
-                            try await viewModel.loadRecipes()
-                        } catch {
-                            print("Failed loading recipes")
-                            viewModel.recipeLoadState = .failed
+                        .refreshable {
+                            do {
+                                try await viewModel.loadRecipes()
+                            } catch {
+                                print("Failed loading recipes")
+                                viewModel.recipeLoadState = .failed
+                            }
                         }
                     }
                 case .failed:
