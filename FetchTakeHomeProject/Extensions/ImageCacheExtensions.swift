@@ -8,13 +8,14 @@
 import Foundation
 import UIKit
 
+// MARK: ImageCache
 extension ImageCache {
     private var diskCacheURL: URL {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
     
+    /// Convert full URL string to a safe filename using percent encoding
     private func filenameFromURL(_ url: URL) -> String {
-        // Convert full URL string to a safe filename using percent encoding
         return url.path.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? UUID().uuidString
     }
 
@@ -23,7 +24,6 @@ extension ImageCache {
         let fileURL = diskCacheURL.appendingPathComponent(filenameFromURL(url))
         guard let data = try? Data(contentsOf: fileURL),
               let image = UIImage(data: data) else {
-            print("Failed loading from disk")
             return nil
         }
         return image

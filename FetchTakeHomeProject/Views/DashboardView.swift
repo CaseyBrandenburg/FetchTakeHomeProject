@@ -193,7 +193,7 @@ struct DashboardView: View {
                                             .foregroundColor(theme.foreground1)
                                             .padding(.bottom, 10)
                                             .padding(.top, 7)
-                                            .onChange(of: viewModel.searchText){ _, value in
+                                            .onChange(of: viewModel.searchText){ value in
                                                 viewModel.updateFilteredRecipes()
                                             }
                                     }

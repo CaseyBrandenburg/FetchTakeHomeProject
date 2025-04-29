@@ -30,11 +30,11 @@ struct Recipe: Identifiable, Codable {
 extension Recipe {
     static var sampleData: [Recipe] = [
         Recipe(id: UUID(),
-               cuisine: "American",
-               name: "Cheese stuffed Cheese",
-               largeImageURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/b9ab0071-b281-4bee-b361-ec340d405320/large.jpg"),
-               smallImageURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/b9ab0071-b281-4bee-b361-ec340d405320/small.jpg"),
+               cuisine: "Error",
+               name: "Error",
+               largeImageURL: URL(string: ""),
+               smallImageURL: URL(string: ""),
                sourceURL: nil,
-               youtubeURL: URL(string: "www.com"))
+               youtubeURL: nil)
     ]
 }

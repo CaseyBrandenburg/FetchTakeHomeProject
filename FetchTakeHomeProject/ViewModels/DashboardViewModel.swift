@@ -53,10 +53,10 @@ class DashboardViewModel: ObservableObject {
     @MainActor
     func loadRecipes() async throws {
         // Good data URL
-        //let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!
+        let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!
         
         // Malformed data URL
-        let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json")!
+        //let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json")!
         
         // Empty data URL
         //let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json")!

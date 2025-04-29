@@ -78,8 +78,8 @@ struct RecipeHighlightView: View {
     VStack {
         Spacer()
         RecipeHighlightView(recipe: Recipe(id: UUID(),
-                                      cuisine: "Brazilian",
-                                      name: "Super Eggs",
+                                      cuisine: "Retroville",
+                                      name: "Purple Flurp",
                                       largeImageURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/b9ab0071-b281-4bee-b361-ec340d405320/large.jpg"),
                                       smallImageURL: nil,
                                       sourceURL: nil,
