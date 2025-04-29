@@ -90,7 +90,7 @@ struct DashboardView: View {
                     GeometryReader { geo in
                         ScrollView {
                             VStack(alignment: .leading, spacing: 10){
-                                if !viewModel.loadedRecipes.isEmpty {
+                                if viewModel.loadedRecipes.isEmpty {
                                     VStack {
                                         Spacer()
                                         Text("There are no recipes available right now\nCome back later and try again")
@@ -232,6 +232,7 @@ struct DashboardView: View {
                                     .foregroundStyle(theme.foreground1)
                                     .font(.headline)
                                     .multilineTextAlignment(.center)
+                                    .padding(.bottom, 40)
                                 Spacer()
                             }
                             .frame(width: geo.size.width, height: geo.size.height)

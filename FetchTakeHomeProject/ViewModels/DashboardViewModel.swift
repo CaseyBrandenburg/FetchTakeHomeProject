@@ -52,7 +52,15 @@ class DashboardViewModel: ObservableObject {
     /// Retrieve and decode the recipe data from the given URL and use it to update loadedRecipes property
     @MainActor
     func loadRecipes() async throws {
-        let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!
+        // Good data URL
+        //let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!
+        
+        // Malformed data URL
+        let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json")!
+        
+        // Empty data URL
+        //let url = URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json")!
+        
         let (data, _) = try await URLSession.shared.data(from: url)
         
         struct RecipeWrapper: Decodable {
