@@ -16,7 +16,7 @@ The majority of focus throughout this project went towards achieving the highest
 Alongside that, alot of focus went into potential bug mitigation and network optimization, making sure that the app would remain smooth should it scale in the future with its current handling of network calls. I also put a considerable amount of thought into the best way to layout the app's code structure so that it would remain easy to maintain should it scale in the future. Currently, its a relatively simple MVVM structure, although its one that could likely be improved upon in the future due to my inexperience.
 
 ## Time Spent
-From start to finish, I spent somewhere in the ballpark of 20 hours working on this project. I could have probably achieved the same result in 14-16 hours, but like every project, there were several points throughout the process that ended up taking longer to work through than I anticipated. 
+From start to finish, I spent somewhere in the ballpark of 10 hours working on this project. I could have probably achieved the same result in 6-8 hours, but like every project, there were several points throughout the process that ended up taking longer to work through than I anticipated. 
 
 First among these was initial project startup and design decisions, both from a project layout and UI design perspective; I wanted to make sure I had a solid foundation that I was going to like throughout the project before I started to prevent any significant changes halfway through. After this was set, the next big time sink for me was setting up the cache system and thoroughly testing it to make sure it behaved as expected. I don't have alot of experience with NSCache, so this took a little longer than expected, but I am very pleased with how it turned out.
 
