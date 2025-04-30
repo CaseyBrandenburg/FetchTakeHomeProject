@@ -1,5 +1,5 @@
 ## ![Hunger404](https://github.com/user-attachments/assets/18f08c94-26bc-40a6-b3ec-250275493be4)
-Welcome to Hunger404, where suddenly, your hunger can no longer be found. Hunger404 is a simple iOS application designed to give users access to easy-to-follow recipes curated by our team of expert food gurus.
+Welcome to Hunger404, where suddenly, your hunger can no longer be found. Hunger404 is a simple iOS application availble for iOS 16+ designed to give users access to easy-to-follow recipes curated by our team of expert food gurus.
 
 ### Main Dashboard
 ![Screenshot 2025-04-29 at 3 56 43 PM](https://github.com/user-attachments/assets/cb46ec44-78da-4eb2-91c1-9cf9fe7d69eb)
